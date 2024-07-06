@@ -1,4 +1,5 @@
 import Photographer from "../models/photographer.models.js";
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 
 const createPhotographer = async (req, res) => {
   const { fname, lname, category, address, phone, email } = req.body;
@@ -7,8 +8,26 @@ const createPhotographer = async (req, res) => {
     return res.status(404).json({ message: "Fields are required" });
   }
 
+  const avatarLocalPath = req.files?.avatar[0]?.path;
+
+  if (!avatarLocalPath) {
+    return res.status(400).json({ message: "User Avatar is required" });
+  }
+
   try {
-    const photographer = new Photographer(req.body);
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    // console.log(avatar)
+
+    if (!avatar) {
+      return res.status(422).json({ message: "Avatar is required" });
+    }
+    const photographer = new Photographer({
+      ...req.body,
+      avatar: avatar?.url || "",
+    });
+
+
     const newPhotographer = await photographer.save();
 
     if (!newPhotographer) {

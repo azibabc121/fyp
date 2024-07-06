@@ -6,12 +6,21 @@ import {
   deleteSinglePhotographer,
   updateSinglePhotographer,
 } from "../controllers/photographer.controllers.js";
+import { upload } from "../middlewares/multer.middlewares.js";
 
 const router = express.Router();
 
-router.post("/", createPhotographer);
+router.route("/register").post(
+  upload.fields([
+    {
+      name: "avatar",
+      maxCount: 1,
+    },
+  ]),
+  createPhotographer
+);
+router.get("/all", getAllPhotographers);
 router.get("/:id", getSinglePhotographer);
-router.get("/", getAllPhotographers);
 router.delete("/:id", deleteSinglePhotographer);
 router.put("/:id", updateSinglePhotographer);
 
