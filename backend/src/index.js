@@ -19,4 +19,4 @@ app.listen(PORT, () => {
 
   // when server is started then connect to database
   dbConnect();
-});
+})
