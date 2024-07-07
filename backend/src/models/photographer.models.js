@@ -24,6 +24,11 @@ const photographerSchema = new Schema(
       type: String,
       require: true,
     },
+    portfolio: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Portfolio",
+      default : ""
+    },
     address: {
       type: String,
       require: true,

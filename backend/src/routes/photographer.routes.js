@@ -5,6 +5,7 @@ import {
   getSinglePhotographer,
   deleteSinglePhotographer,
   updateSinglePhotographer,
+  uploadPhotographerPortfolio,
 } from "../controllers/photographer.controllers.js";
 import { upload } from "../middlewares/multer.middlewares.js";
 
@@ -23,5 +24,15 @@ router.get("/all", getAllPhotographers);
 router.get("/:id", getSinglePhotographer);
 router.delete("/:id", deleteSinglePhotographer);
 router.put("/:id", updateSinglePhotographer);
+router.post(
+  "/portfolio/:id",
+  upload.fields([
+    {
+      name: "portfolio",
+      maxCount: 5,
+    },
+  ]),
+  uploadPhotographerPortfolio
+);
 
 export default router;
