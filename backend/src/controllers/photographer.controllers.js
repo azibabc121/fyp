@@ -34,7 +34,7 @@ const createPhotographer = async (req, res) => {
 
     const photographer = new Photographer({
       ...req.body,
-      avatar: avatar?.url || "",
+      avatar: avatar.url || "",
     });
 
     const portfolio = new Portfolio({
@@ -44,8 +44,8 @@ const createPhotographer = async (req, res) => {
 
     photographer.portfolio = portfolio._id;
 
-    const newPhotographer = await photographer.save();
     const photographerPortfolio = await portfolio.save();
+    const newPhotographer = await photographer.save();
 
     if (!newPhotographer || !photographerPortfolio) {
       return res.status(422).json({ message: "Unable to add photographer" });
@@ -105,13 +105,14 @@ const getSinglePhotographer = async (req, res) => {
 const deleteSinglePhotographer = async (req, res) => {
   const { id } = req.params;
   try {
-    const photographer = await Photographer.findByIdAndDelete(id);
+    const photographer = await Photographer.findOneAndDelete({ _id: id });
 
     if (!photographer) {
       return res
         .status(404)
         .json({ message: `Unable to find photographer with id ${id}` });
     }
+
     res.status(200).json({ message: "Photographer deleted successfully" });
   } catch (error) {
     res
@@ -187,7 +188,7 @@ const uploadPhotographerPortfolio = async (req, res) => {
 
     const updatedPortfolio = await Portfolio.findOneAndUpdate(
       { photographerId: id },
-      { $pushs: { portfolio: urls } },
+      { $push: { portfolio: urls } },
       { new: true, runValidators: true }
     );
 
@@ -196,22 +197,6 @@ const uploadPhotographerPortfolio = async (req, res) => {
     }
 
     res.status(200).json({ data: updatedPortfolio });
-    // const userPortfolio = new Portfolio({
-    //   photographerId: id,
-    //   portfolio: urls,
-    // });
-
-    // const createdPortfolio = await userPortfolio.save();
-
-    // if (!createdPortfolio) {
-    //   return res
-    //     .status(422)
-    //     .json({ message: "Unable to create user portfolio" });
-    // }
-    // res.status(200).json({
-    //   message: "User portfolio created successfully",
-    //   createdPortfolio,
-    // });
   } catch (error) {
     console.log(error);
     return res

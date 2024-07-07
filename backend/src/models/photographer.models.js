@@ -1,11 +1,6 @@
 import mongoose, { Schema } from "mongoose";
+import { Portfolio } from "./portfolio.models.js";
 
-// fname: "df",
-// lname: "f",
-// category: "d",
-// address: "d",
-// phone: "123",
-// email: "sd",
 const photographerSchema = new Schema(
   {
     fname: {
@@ -25,9 +20,10 @@ const photographerSchema = new Schema(
       require: true,
     },
     portfolio: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Portfolio",
-      default : ""
+      // type: mongoose.Schema.Types.ObjectId,
+      // ref: "Portfolio",
+      type: "string",
+      default: "default",
     },
     address: {
       type: String,
@@ -44,6 +40,20 @@ const photographerSchema = new Schema(
   },
   { timestamps: true }
 );
+
+photographerSchema.pre("findOneAndDelete", async function (next) {
+  try {
+    const doc = await this.model.findOne(this.getFilter());
+    if (doc && doc.portfolio) {
+      await Portfolio.findByIdAndDelete(doc.portfolio);
+    }
+    next();
+  } catch (error) {
+    console.log("Error in pre remove photographer middleware", error);
+    next(error);
+  }
+});
+
 
 const Photographer = mongoose.model("Photographer", photographerSchema);
 export default Photographer;

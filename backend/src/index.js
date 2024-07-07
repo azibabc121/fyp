@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import dbConnect from "./db/db.js";
 import healtRoute from "./routes/health.routes.js";
 import photographerRoutes from "./routes/photographer.routes.js";
-
+import portfolioRoutes from "./routes/portfolio.routes.js";
 dotenv.config({
   path: "./env",
 });
@@ -16,6 +16,7 @@ app.use(express.json());
 app.use("/health", healtRoute);
 // Route 2 - Photographer CRUD
 app.use("/photographer", photographerRoutes);
+app.use("/portfolio", portfolioRoutes);
 
 app.listen(PORT, () => {
   console.log(`Server is running on ${PORT}`);
